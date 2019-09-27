@@ -49,7 +49,15 @@ control-logic and processes transactions by incrementing them as they pass
 a 5-stage pipeline that can either stall or squash based on the injected
 transactions.
 
-### Installing PyMTL
+### Requirements for Chisel
+
+For a Mac OS X
+
+```
+brew install sbt verilator
+```
+
+### Requirements for PyMTL
 
 Follow the steps below to first PyMTL using a virtualenv.
 
@@ -71,6 +79,12 @@ pip install --editable .[pymtl]
 pip install --upgrade pytest
 ```
 
+Make sure you set the following environment variable
+
+```sh
+export PYMTL_VERILATOR_INCLUDE_DIR="/usr/local/share/verilator/include"
+```
+
 ### Trying the GCD example
 
 Execute the script below and follow the steps listed in the output
@@ -89,7 +103,10 @@ to figure out the sbt-style organization for the PyMTL scripts.
 
 The example shows how to import a Chisel generated pipeline-control-logic
 unit into an incrementer pipeline that is modeled in PyMTL and run tests.
-For details read the comments in `PipeCtrl.scala` and `IncrPipe.py`.
+For details read the comments in
+[PipeCtrl.scala](https://github.com/ss2783/chisel-pymtl-template/blob/master/src/main/scala/pipectrl/PipeCtrl.scala)
+and
+[IncrPipe.py](https://github.com/ss2783/chisel-pymtl-template/blob/master/src/main/resources/pipectrl/IncrPipe.py)
 
 Execute the script below and follow the steps listed in the output
 
