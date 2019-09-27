@@ -85,6 +85,38 @@ Fix the error for the simple GCD test!
 NOTE: Admittedly, I can improve this with a build system and also, I need
 to figure out the sbt-style organization for the PyMTL scripts.
 
+### Trying the Incrementer Pipeline
+
+The example shows how to import a Chisel generated pipeline-control-logic
+unit into an incrementer pipeline that is modeled in PyMTL and run tests.
+For details read the comments in `PipeCtrl.scala` and `IncrPipe.py`.
+
+Execute the script below and follow the steps listed in the output
+
+```sh
+./scripts/build-pipectrl -h
+./scripts/build-pipectrl -b
+```
+
+After building the circuit you can see an example linetrace for the
+simple incrementer pipeline as below:
+
+```sh
+cd pipectrl-circuit && py.test -k simple_pipe[0-0] -s
+
+  2: .     >     |     |     |     |     > .
+  3: 00001 >     |     |     |     |     >
+  4: 00002 >  1  |     |     |     |     >
+  5: 00003 >  2  |  1  |     |     |     >
+  6: 00004 >  3  |  2  |  1  |     |     >
+  7: 00005 >  4  |  3  |  2  |  2  |     >
+  8:       >  5  |  4  |  3  |  3  |  3  > 04
+  9:       >     |  5  |  4  |  4  |  4  > 05
+ 10:       >     |     |  5  |  5  |  5  > 06
+ 11:       >     |     |     |  6  |  6  > 07
+ 12:       >     |     |     |     |  7  > 08
+```
+
 ## Development/Bug Fixes
 
 If you have bug fixes or changes you would like to see incorporated in this
