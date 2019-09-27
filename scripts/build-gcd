@@ -1,0 +1,101 @@
+#!/usr/bin/env python
+#=========================================================================
+# build-gcd
+#=========================================================================
+#
+#  -h --help           Display this message
+#  -b --build          Generate the chisel circuit
+#  -c --clean          Clean-up (deletes everything)
+#  -p --print-only     Print only
+#
+# Author : Shreesha Srinath
+# Date   : September 26th, 2019
+
+import argparse
+import os
+import random
+import re
+import sys
+import subprocess
+
+#-------------------------------------------------------------------------
+# Global variables
+#-------------------------------------------------------------------------
+
+g_print_only = False
+
+#-------------------------------------------------------------------------
+# Utility Function
+#-------------------------------------------------------------------------
+
+def execute(cmd):
+  try:
+    print( cmd )
+    if not g_print_only:
+      return subprocess.check_output(cmd, shell=True)
+  except  subprocess.CalledProcessError as err:
+    return err
+
+#-------------------------------------------------------------------------
+# Command line processing
+#-------------------------------------------------------------------------
+
+class ArgumentParserWithCustomError(argparse.ArgumentParser):
+  def error( self, msg = "" ):
+    if ( msg ): print("\n ERROR: %s" % msg)
+    print("")
+    file = open( sys.argv[0] )
+    for ( lineno, line ) in enumerate( file ):
+      if ( line[0] != '#' ): sys.exit(msg != "")
+      if ( (lineno == 2) or (lineno >= 4) ): print( line[1:].rstrip("\n") )
+
+def parse_cmdline():
+  p = ArgumentParserWithCustomError( add_help=False )
+
+  # Standard command line arguments
+
+  p.add_argument( "-h", "--help",       action="store_true" )
+  p.add_argument( "-b", "--build",      action="store_true" )
+  p.add_argument( "-c", "--clean",      action="store_true" )
+  p.add_argument( "-p", "--print-only", action="store_true" )
+
+  opts = p.parse_args()
+  if opts.help: p.error()
+  return opts
+
+#-------------------------------------------------------------------------
+# main
+#-------------------------------------------------------------------------
+
+if __name__ == "__main__":
+
+  # parse commandline options
+  opts = parse_cmdline()
+  g_print_only = opts.print_only if opts.print_only else False
+  curr_dir = os.getcwd()
+  target_dir = os.getcwd() + "/gcd-circuit" 
+
+  # build 
+  if opts.build:
+    cmds = []
+    cmds.append('mkdir ' + target_dir)
+    cmds.append('sbt "runMain gcd.GCDMain"')
+    cmds.append('mv {curr_dir}/GCD.anno.json {target_dir}/.'.format(curr_dir=curr_dir,target_dir=target_dir))
+    cmds.append('mv {curr_dir}/GCD.fir {target_dir}/.'.format(curr_dir=curr_dir,target_dir=target_dir))
+    cmds.append('mv {curr_dir}/GCD.v {target_dir}/.'.format(curr_dir=curr_dir,target_dir=target_dir))
+    cmds.append('cp src/main/resources/gcd/GCD.py {target_dir}/.'.format(target_dir=target_dir))
+    cmds.append('cp src/main/resources/gcd/GCD_test.py {target_dir}/.'.format(target_dir=target_dir))
+    [execute(cmd) for cmd in cmds]
+
+    print "\n"
+    print "-"*75
+    print "To test the GCD circuit:"
+    print "-"*75
+    print "   % cd {target_dir}".format(target_dir=target_dir)
+    print "   % python GCD_test.py"
+    print "\n"
+
+  # clean
+  if opts.clean:
+    execute('rm -r ' + target_dir)
+

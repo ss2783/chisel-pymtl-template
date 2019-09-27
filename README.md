@@ -73,6 +73,18 @@ pip install --upgrade pytest
 
 ### Trying the GCD example
 
+Execute the script below and follow the steps listed in the output
+
+```sh
+./scripts/build-gcd -h
+./scripts/build-gcd -b
+```
+
+Fix the error for the simple GCD test!
+
+NOTE: Admittedly, I can improve this with a build system and also, I need
+to figure out the sbt-style organization for the PyMTL scripts.
+
 ## Development/Bug Fixes
 
 If you have bug fixes or changes you would like to see incorporated in this
